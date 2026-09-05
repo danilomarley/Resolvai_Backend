@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/db/">
+    <File Path="db/scripts/001_create_users.sql" />
+    <File Path="db/scripts/002_drop_password_hash.sql" />
+  </Folder>
+  <Folder Name="/solution items/">
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Resolvai.Domain/Resolvai.Domain.csproj" />
+    <Project Path="src/Resolvai.Application/Resolvai.Application.csproj" />
+    <Project Path="src/Resolvai.Infrastructure/Resolvai.Infrastructure.csproj" />
+    <Project Path="src/Resolvai.Api/Resolvai.Api.csproj" />
+  </Folder>
+</Solution>
