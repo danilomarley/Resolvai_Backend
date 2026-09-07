@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Resolvai.Application.DTOs.Users;
-using Resolvai.Application.Services.Interfaces;
+using Resolvai.Application.Users;
+using Resolvai.Application.Users.DTOs;
 using Resolvai.Domain.Enums;
 
 namespace Resolvai.Api.Controllers.V1;
@@ -14,23 +14,26 @@ public sealed class UsersController(IUserService userService) : ApiControllerBas
     /// </summary>
     [HttpGet("me")]
     [ProducesResponseType<UserResponse>(StatusCodes.Status200OK)]
-    public async Task<ActionResult<UserResponse>> GetCurrent(CancellationToken cancellationToken)
-        => Ok(await userService.GetCurrentAsync(cancellationToken));
+    public async Task<ActionResult<UserResponse>> GetCurrent(CancellationToken cancellationToken) =>
+        Ok(await userService.GetCurrentAsync(cancellationToken));
 
     [HttpGet]
     [Authorize(Roles = nameof(UserRole.Admin))]
     [ProducesResponseType<IReadOnlyList<UserResponse>>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<ActionResult<IReadOnlyList<UserResponse>>> GetAll(CancellationToken cancellationToken)
-        => Ok(await userService.GetAllAsync(cancellationToken));
+    public async Task<ActionResult<IReadOnlyList<UserResponse>>> GetAll(
+        CancellationToken cancellationToken
+    ) => Ok(await userService.GetAllAsync(cancellationToken));
 
     [HttpGet("{id:guid}", Name = "GetUserById")]
     [Authorize(Roles = nameof(UserRole.Admin))]
     [ProducesResponseType<UserResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<UserResponse>> GetById(Guid id, CancellationToken cancellationToken)
-        => Ok(await userService.GetByIdAsync(id, cancellationToken));
+    public async Task<ActionResult<UserResponse>> GetById(
+        Guid id,
+        CancellationToken cancellationToken
+    ) => Ok(await userService.GetByIdAsync(id, cancellationToken));
 
     /// <summary>
     /// Criação administrativa, única forma de nascer com papel diferente de Viewer.
@@ -43,7 +46,8 @@ public sealed class UsersController(IUserService userService) : ApiControllerBas
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<UserResponse>> Create(
         [FromBody] CreateUserRequest request,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken
+    )
     {
         var user = await userService.CreateAsync(request, cancellationToken);
 
@@ -53,11 +57,12 @@ public sealed class UsersController(IUserService userService) : ApiControllerBas
     [HttpPatch("{id:guid}/status")]
     [Authorize(Roles = nameof(UserRole.Admin))]
     [ProducesResponseType<UserResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<UserResponse>> SetStatus(
         Guid id,
         [FromBody] SetUserStatusRequest request,
-        CancellationToken cancellationToken)
-        => Ok(await userService.SetActiveAsync(id, request.IsActive, cancellationToken));
+        CancellationToken cancellationToken
+    ) => Ok(await userService.SetActiveAsync(id, request.IsActive, cancellationToken));
 }

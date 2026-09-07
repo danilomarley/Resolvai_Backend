@@ -1,23 +1,34 @@
 <Project>
-
-  <PropertyGroup>
-    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageVersion Include="Dapper" Version="2.1.79" />
-    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.11" />
-    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.11" />
-    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.Options" Version="10.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.0" />
-    <!-- Fixado acima do 2.0.0 trazido transitivamente, que tem vulnerabilidade conhecida (GHSA-v5pm-xwqc-g5wc). -->
-    <PackageVersion Include="Microsoft.OpenApi" Version="2.12.2" />
-    <PackageVersion Include="Npgsql" Version="10.0.3" />
-    <PackageVersion Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.1.7" />
-  </ItemGroup>
-
+    <PropertyGroup>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+        <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+        <PackageVersion Include="xunit" Version="2.9.3" />
+        <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.4" />
+        <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="10.0.11" />
+        <PackageVersion Include="Dapper" Version="2.1.79" />
+        <PackageVersion Include="FluentValidation" Version="12.1.1" />
+        <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.11" />
+        <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.11" />
+        <PackageVersion
+            Include="Microsoft.Extensions.Configuration.Abstractions"
+            Version="10.0.0"
+        />
+        <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.0" />
+        <PackageVersion
+            Include="Microsoft.Extensions.DependencyInjection.Abstractions"
+            Version="10.0.0"
+        />
+        <PackageVersion Include="Microsoft.Extensions.Options" Version="10.0.0" />
+        <PackageVersion
+            Include="Microsoft.Extensions.Options.ConfigurationExtensions"
+            Version="10.0.0"
+        />
+        <!-- Fixado acima do 2.0.0 trazido transitivamente, que tem vulnerabilidade conhecida (GHSA-v5pm-xwqc-g5wc). -->
+        <PackageVersion Include="Microsoft.OpenApi" Version="2.12.2" />
+        <PackageVersion Include="Npgsql" Version="10.0.3" />
+        <PackageVersion Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.1.7" />
+    </ItemGroup>
 </Project>

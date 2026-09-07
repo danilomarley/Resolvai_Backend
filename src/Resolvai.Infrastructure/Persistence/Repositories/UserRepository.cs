@@ -22,38 +22,70 @@ public sealed class UserRepository(IDbConnectionFactory connectionFactory) : IUs
 
     public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        await using var connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
+        await using var connection = await connectionFactory.CreateConnectionAsync(
+            cancellationToken
+        );
 
         var row = await connection.QuerySingleOrDefaultAsync<UserRow>(
-            Command($"{SelectColumns} where id = @Id;", new { Id = id }, cancellationToken));
+            Command($"{SelectColumns} where id = @Id;", new { Id = id }, cancellationToken)
+        );
 
         return row?.ToDomain();
     }
 
-    public async Task<User?> GetByEmailAsync(Email email, CancellationToken cancellationToken = default)
+    public async Task<User?> GetByEmailAsync(
+        Email email,
+        CancellationToken cancellationToken = default
+    )
     {
-        await using var connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
+        await using var connection = await connectionFactory.CreateConnectionAsync(
+            cancellationToken
+        );
 
         var row = await connection.QuerySingleOrDefaultAsync<UserRow>(
-            Command($"{SelectColumns} where email = @Email;", new { Email = email }, cancellationToken));
+            Command(
+                $"{SelectColumns} where email = @Email;",
+                new { Email = email },
+                cancellationToken
+            )
+        );
 
         return row?.ToDomain();
     }
 
-    public async Task<bool> ExistsByEmailAsync(Email email, CancellationToken cancellationToken = default)
+    public async Task<bool> ExistsByEmailAsync(
+        Email email,
+        CancellationToken cancellationToken = default
+    )
     {
-        await using var connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
+        await using var connection = await connectionFactory.CreateConnectionAsync(
+            cancellationToken
+        );
 
         return await connection.ExecuteScalarAsync<bool>(
-            Command("select exists (select 1 from users where email = @Email);", new { Email = email }, cancellationToken));
+            Command(
+                "select exists (select 1 from users where email = @Email);",
+                new { Email = email },
+                cancellationToken
+            )
+        );
     }
 
-    public async Task<IReadOnlyList<User>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<User>> GetAllAsync(
+        CancellationToken cancellationToken = default
+    )
     {
-        await using var connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
+        await using var connection = await connectionFactory.CreateConnectionAsync(
+            cancellationToken
+        );
 
         var rows = await connection.QueryAsync<UserRow>(
-            Command($"{SelectColumns} order by created_at desc;", parameters: null, cancellationToken));
+            Command(
+                $"{SelectColumns} order by created_at desc;",
+                parameters: null,
+                cancellationToken
+            )
+        );
 
         return rows.Select(row => row.ToDomain()).ToList();
     }
@@ -65,7 +97,9 @@ public sealed class UserRepository(IDbConnectionFactory connectionFactory) : IUs
             values (@Id, @Name, @Email, @Role, @IsActive, @CreatedAt, @UpdatedAt);
             """;
 
-        await using var connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
+        await using var connection = await connectionFactory.CreateConnectionAsync(
+            cancellationToken
+        );
 
         await connection.ExecuteAsync(Command(sql, ToParameters(user), cancellationToken));
     }
@@ -82,24 +116,36 @@ public sealed class UserRepository(IDbConnectionFactory connectionFactory) : IUs
              where id = @Id;
             """;
 
-        await using var connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
+        await using var connection = await connectionFactory.CreateConnectionAsync(
+            cancellationToken
+        );
 
         await connection.ExecuteAsync(Command(sql, ToParameters(user), cancellationToken));
     }
 
-    private CommandDefinition Command(string sql, object? parameters, CancellationToken cancellationToken)
-        => new(sql, parameters, commandTimeout: connectionFactory.CommandTimeoutSeconds, cancellationToken: cancellationToken);
+    private CommandDefinition Command(
+        string sql,
+        object? parameters,
+        CancellationToken cancellationToken
+    ) =>
+        new(
+            sql,
+            parameters,
+            commandTimeout: connectionFactory.CommandTimeoutSeconds,
+            cancellationToken: cancellationToken
+        );
 
-    private static object ToParameters(User user) => new
-    {
-        user.Id,
-        user.Name,
-        user.Email,
-        Role = user.Role.ToString(),
-        user.IsActive,
-        user.CreatedAt,
-        user.UpdatedAt
-    };
+    private static object ToParameters(User user) =>
+        new
+        {
+            user.Id,
+            user.Name,
+            user.Email,
+            Role = user.Role.ToString(),
+            user.IsActive,
+            user.CreatedAt,
+            user.UpdatedAt,
+        };
 
     private sealed record UserRow(
         Guid Id,
@@ -108,15 +154,18 @@ public sealed class UserRepository(IDbConnectionFactory connectionFactory) : IUs
         string Role,
         bool IsActive,
         DateTimeOffset CreatedAt,
-        DateTimeOffset? UpdatedAt)
+        DateTimeOffset? UpdatedAt
+    )
     {
-        public User ToDomain() => User.Restore(
-            Id,
-            Name,
-            Email.Create(EmailAddress),
-            Enum.Parse<UserRole>(Role, ignoreCase: true),
-            IsActive,
-            CreatedAt,
-            UpdatedAt);
+        public User ToDomain() =>
+            User.Restore(
+                Id,
+                Name,
+                Email.Create(EmailAddress),
+                Enum.Parse<UserRole>(Role, ignoreCase: true),
+                IsActive,
+                CreatedAt,
+                UpdatedAt
+            );
     }
 }

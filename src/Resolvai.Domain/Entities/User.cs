@@ -1,6 +1,5 @@
 using Resolvai.Domain.Common;
 using Resolvai.Domain.Enums;
-using Resolvai.Domain.Exceptions;
 using Resolvai.Domain.ValueObjects;
 
 namespace Resolvai.Domain.Entities;
@@ -14,7 +13,8 @@ public sealed class User : Entity<Guid>, IAggregateRoot
         UserRole role,
         bool isActive,
         DateTimeOffset createdAt,
-        DateTimeOffset? updatedAt)
+        DateTimeOffset? updatedAt
+    )
         : base(id)
     {
         Name = name;
@@ -43,18 +43,6 @@ public sealed class User : Entity<Guid>, IAggregateRoot
     /// </summary>
     public static User Register(Guid id, string name, Email email, UserRole role)
     {
-        ArgumentNullException.ThrowIfNull(email);
-
-        if (id == Guid.Empty)
-        {
-            throw new DomainException("O identificador do usuário é obrigatório.");
-        }
-
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new DomainException("O nome do usuário é obrigatório.");
-        }
-
         return new User(
             id,
             name.Trim(),
@@ -62,7 +50,8 @@ public sealed class User : Entity<Guid>, IAggregateRoot
             role,
             isActive: true,
             createdAt: DateTimeOffset.UtcNow,
-            updatedAt: null);
+            updatedAt: null
+        );
     }
 
     /// <summary>
@@ -75,16 +64,11 @@ public sealed class User : Entity<Guid>, IAggregateRoot
         UserRole role,
         bool isActive,
         DateTimeOffset createdAt,
-        DateTimeOffset? updatedAt)
-        => new(id, name, email, role, isActive, createdAt, updatedAt);
+        DateTimeOffset? updatedAt
+    ) => new(id, name, email, role, isActive, createdAt, updatedAt);
 
     public void ChangeName(string name)
     {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new DomainException("O nome do usuário é obrigatório.");
-        }
-
         Name = name.Trim();
         Touch();
     }

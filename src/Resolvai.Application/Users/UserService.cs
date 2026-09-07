@@ -1,21 +1,27 @@
+using FluentValidation;
 using Resolvai.Application.Common.Exceptions;
 using Resolvai.Application.Contracts.Security;
-using Resolvai.Application.DTOs.Users;
-using Resolvai.Application.Mappings;
-using Resolvai.Application.Services.Interfaces;
+using Resolvai.Application.Users.DTOs;
 using Resolvai.Domain.Entities;
 using Resolvai.Domain.Repositories;
 using Resolvai.Domain.ValueObjects;
 
-namespace Resolvai.Application.Services;
+namespace Resolvai.Application.Users;
 
 public sealed class UserService(
     IUserRepository userRepository,
     ISupabaseAuthClient supabaseAuthClient,
-    ICurrentUser currentUser) : IUserService
+    ICurrentUser currentUser,
+    IValidator<CreateUserRequest> createValidator,
+    IValidator<User> userValidator
+) : IUserService
 {
-    public async Task<UserResponse> CreateAsync(CreateUserRequest request, CancellationToken cancellationToken = default)
+    public async Task<UserResponse> CreateAsync(
+        CreateUserRequest request,
+        CancellationToken cancellationToken = default
+    )
     {
+        await createValidator.ValidateAndThrowAsync(request, cancellationToken);
         var email = Email.Create(request.Email);
 
         if (await userRepository.ExistsByEmailAsync(email, cancellationToken))
@@ -27,17 +33,23 @@ public sealed class UserService(
             email.Value,
             request.Password,
             request.Name,
-            cancellationToken);
+            cancellationToken
+        );
 
         var user = User.Register(authUser.Id, request.Name, email, request.Role);
+        await userValidator.ValidateAndThrowAsync(user, cancellationToken);
         await userRepository.AddAsync(user, cancellationToken);
 
         return user.ToResponse();
     }
 
-    public async Task<UserResponse> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<UserResponse> GetByIdAsync(
+        Guid id,
+        CancellationToken cancellationToken = default
+    )
     {
-        var user = await userRepository.GetByIdAsync(id, cancellationToken)
+        var user =
+            await userRepository.GetByIdAsync(id, cancellationToken)
             ?? throw new NotFoundException("Usuário", id);
 
         return user.ToResponse();
@@ -45,21 +57,30 @@ public sealed class UserService(
 
     public Task<UserResponse> GetCurrentAsync(CancellationToken cancellationToken = default)
     {
-        var id = currentUser.Id ?? throw new UnauthorizedException("Token sem identificação de usuário.");
+        var id =
+            currentUser.Id
+            ?? throw new UnauthorizedException("Token sem identificação de usuário.");
 
         return GetByIdAsync(id, cancellationToken);
     }
 
-    public async Task<IReadOnlyList<UserResponse>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<UserResponse>> GetAllAsync(
+        CancellationToken cancellationToken = default
+    )
     {
         var users = await userRepository.GetAllAsync(cancellationToken);
 
         return users.Select(user => user.ToResponse()).ToList();
     }
 
-    public async Task<UserResponse> SetActiveAsync(Guid id, bool isActive, CancellationToken cancellationToken = default)
+    public async Task<UserResponse> SetActiveAsync(
+        Guid id,
+        bool isActive,
+        CancellationToken cancellationToken = default
+    )
     {
-        var user = await userRepository.GetByIdAsync(id, cancellationToken)
+        var user =
+            await userRepository.GetByIdAsync(id, cancellationToken)
             ?? throw new NotFoundException("Usuário", id);
 
         if (isActive)
@@ -71,6 +92,7 @@ public sealed class UserService(
             user.Deactivate();
         }
 
+        await userValidator.ValidateAndThrowAsync(user, cancellationToken);
         await userRepository.UpdateAsync(user, cancellationToken);
 
         return user.ToResponse();

@@ -1,4 +1,4 @@
-namespace Resolvai.Application.DTOs.Users;
+namespace Resolvai.Application.Users.DTOs;
 
 public sealed record UserResponse(
     Guid Id,
@@ -6,4 +6,5 @@ public sealed record UserResponse(
     string Email,
     string Role,
     bool IsActive,
-    DateTimeOffset CreatedAt);
+    DateTimeOffset CreatedAt
+);

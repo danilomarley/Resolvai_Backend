@@ -13,34 +13,39 @@ public static class AuthenticationExtensions
 {
     public static IServiceCollection AddSupabaseAuthentication(this IServiceCollection services)
     {
-        services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
-            .Configure<IOptions<SupabaseOptions>>((bearer, supabase) =>
-            {
-                var settings = supabase.Value;
-                var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settings.JwtSecret));
-
-                // Sem mapeamento legado: claims chegam com os nomes curtos do JWT do Supabase.
-                bearer.MapInboundClaims = false;
-                bearer.TokenValidationParameters = new TokenValidationParameters
+        services
+            .AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
+            .Configure<IOptions<SupabaseOptions>>(
+                (bearer, supabase) =>
                 {
-                    ValidateIssuer = true,
-                    ValidIssuer = settings.AuthIssuer,
-                    ValidateAudience = true,
-                    ValidAudience = settings.Audience,
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = signingKey,
-                    ValidAlgorithms = [SecurityAlgorithms.HmacSha256],
-                    ValidateLifetime = true,
-                    ClockSkew = TimeSpan.FromMinutes(1),
-                    NameClaimType = AppClaimTypes.Email,
-                    RoleClaimType = AppClaimTypes.Role
-                };
+                    var settings = supabase.Value;
+                    var signingKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(settings.JwtSecret)
+                    );
 
-                bearer.Events = new JwtBearerEvents
-                {
-                    OnTokenValidated = EnrichWithLocalProfileAsync
-                };
-            });
+                    // Sem mapeamento legado: claims chegam com os nomes curtos do JWT do Supabase.
+                    bearer.MapInboundClaims = false;
+                    bearer.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuer = settings.AuthIssuer,
+                        ValidateAudience = true,
+                        ValidAudience = settings.Audience,
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = signingKey,
+                        ValidAlgorithms = [SecurityAlgorithms.HmacSha256],
+                        ValidateLifetime = true,
+                        ClockSkew = TimeSpan.FromMinutes(1),
+                        NameClaimType = AppClaimTypes.Email,
+                        RoleClaimType = AppClaimTypes.Role,
+                    };
+
+                    bearer.Events = new JwtBearerEvents
+                    {
+                        OnTokenValidated = EnrichWithLocalProfileAsync,
+                    };
+                }
+            );
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
         services.AddAuthorization();

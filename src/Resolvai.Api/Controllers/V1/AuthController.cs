@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Resolvai.Application.DTOs.Auth;
-using Resolvai.Application.DTOs.Users;
-using Resolvai.Application.Services.Interfaces;
+using Resolvai.Application.Auth;
+using Resolvai.Application.Auth.DTOs;
+using Resolvai.Application.Users.DTOs;
 
 namespace Resolvai.Api.Controllers.V1;
 
@@ -18,8 +18,8 @@ public sealed class AuthController(IAuthService authService) : ApiControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<LoginResponse>> Login(
         [FromBody] LoginRequest request,
-        CancellationToken cancellationToken)
-        => Ok(await authService.LoginAsync(request, cancellationToken));
+        CancellationToken cancellationToken
+    ) => Ok(await authService.LoginAsync(request, cancellationToken));
 
     /// <summary>
     /// Auto-cadastro público no Supabase Auth. O perfil local sempre nasce com o papel Viewer.
@@ -31,7 +31,8 @@ public sealed class AuthController(IAuthService authService) : ApiControllerBase
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<ActionResult<UserResponse>> Register(
         [FromBody] RegisterRequest request,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken
+    )
     {
         var user = await authService.RegisterAsync(request, cancellationToken);
 

@@ -1,7 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <RootNamespace>Resolvai.Domain</RootNamespace>
-  </PropertyGroup>
-
+    <PropertyGroup>
+        <RootNamespace>Resolvai.Domain</RootNamespace>
+    </PropertyGroup>
 </Project>

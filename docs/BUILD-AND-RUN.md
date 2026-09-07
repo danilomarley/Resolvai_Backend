@@ -134,3 +134,21 @@ dotnet dev-certs https --trust
 | `401` nas rotas protegidas | Login via `POST /api/v1/auth/login` e uso do `accessToken` no Bearer |
 | Build falha com TFM `net10.0` | Instalar o .NET 10 SDK e reiniciar o IDE |
 | Porta em uso | Encerrar outro processo na `5172`/`7099` ou alterar `launchSettings.json` |
+
+## Formatação e validação das alterações
+
+Na raiz do repositório, restaure a ferramenta local e padronize os arquivos:
+
+```powershell
+dotnet tool restore
+dotnet csharpier format .
+```
+
+Antes de entregar alterações:
+
+```powershell
+dotnet csharpier check .
+dotnet test Resolvai.Api.slnx
+```
+
+Os testes usam dependências em memória e não precisam de banco ou credenciais do Supabase. Para saber onde adicionar serviços, DTOs e validators do FluentValidation, consulte [PROJECT-STRUCTURE.md](PROJECT-STRUCTURE.md).

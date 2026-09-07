@@ -5,19 +5,22 @@ public interface ISupabaseAuthClient
     Task<SupabaseSession> SignInWithPasswordAsync(
         string email,
         string password,
-        CancellationToken cancellationToken = default);
+        CancellationToken cancellationToken = default
+    );
 
     Task<SupabaseAuthUser> SignUpAsync(
         string email,
         string password,
         string name,
-        CancellationToken cancellationToken = default);
+        CancellationToken cancellationToken = default
+    );
 
     Task<SupabaseAuthUser> AdminCreateUserAsync(
         string email,
         string password,
         string name,
-        CancellationToken cancellationToken = default);
+        CancellationToken cancellationToken = default
+    );
 }
 
 public sealed record SupabaseSession(
@@ -25,6 +28,7 @@ public sealed record SupabaseSession(
     string TokenType,
     DateTimeOffset ExpiresAtUtc,
     string? RefreshToken,
-    SupabaseAuthUser User);
+    SupabaseAuthUser User
+);
 
 public sealed record SupabaseAuthUser(Guid Id, string Email);

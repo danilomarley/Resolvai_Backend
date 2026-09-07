@@ -7,5 +7,5 @@ public enum UserRole
 {
     Viewer = 0,
     Inspector = 1,
-    Admin = 2
+    Admin = 2,
 }

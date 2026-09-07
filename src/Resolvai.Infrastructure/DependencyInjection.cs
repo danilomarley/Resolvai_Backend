@@ -12,9 +12,13 @@ namespace Resolvai.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddInfrastructure(
+        this IServiceCollection services,
+        IConfiguration configuration
+    )
     {
-        services.AddOptions<DatabaseOptions>()
+        services
+            .AddOptions<DatabaseOptions>()
             .Bind(configuration.GetSection(DatabaseOptions.SectionName))
             .PostConfigure(options =>
             {
@@ -28,16 +32,33 @@ public static class DependencyInjection
             })
             .Validate(
                 options => !string.IsNullOrWhiteSpace(options.ConnectionString),
-                "Database:ConnectionString (ou ConnectionStrings:Supabase) não foi configurada.")
+                "Database:ConnectionString (ou ConnectionStrings:Supabase) não foi configurada."
+            )
             .ValidateOnStart();
 
-        services.AddOptions<SupabaseOptions>()
+        services
+            .AddOptions<SupabaseOptions>()
             .Bind(configuration.GetSection(SupabaseOptions.SectionName))
-            .Validate(options => !string.IsNullOrWhiteSpace(options.Url), "Supabase:Url não foi configurada.")
-            .Validate(options => !string.IsNullOrWhiteSpace(options.AnonKey), "Supabase:AnonKey não foi configurada.")
-            .Validate(options => !string.IsNullOrWhiteSpace(options.ServiceRoleKey), "Supabase:ServiceRoleKey não foi configurada.")
-            .Validate(options => !string.IsNullOrWhiteSpace(options.JwtSecret), "Supabase:JwtSecret não foi configurada.")
-            .Validate(options => !string.IsNullOrWhiteSpace(options.Audience), "Supabase:Audience não foi configurada.")
+            .Validate(
+                options => !string.IsNullOrWhiteSpace(options.Url),
+                "Supabase:Url não foi configurada."
+            )
+            .Validate(
+                options => !string.IsNullOrWhiteSpace(options.AnonKey),
+                "Supabase:AnonKey não foi configurada."
+            )
+            .Validate(
+                options => !string.IsNullOrWhiteSpace(options.ServiceRoleKey),
+                "Supabase:ServiceRoleKey não foi configurada."
+            )
+            .Validate(
+                options => !string.IsNullOrWhiteSpace(options.JwtSecret),
+                "Supabase:JwtSecret não foi configurada."
+            )
+            .Validate(
+                options => !string.IsNullOrWhiteSpace(options.Audience),
+                "Supabase:Audience não foi configurada."
+            )
             .ValidateOnStart();
 
         DapperTypeHandlers.Register();
@@ -45,13 +66,17 @@ public static class DependencyInjection
         services.AddSingleton<IDbConnectionFactory, NpgsqlConnectionFactory>();
         services.AddScoped<IUserRepository, UserRepository>();
 
-        services.AddHttpClient<ISupabaseAuthClient, SupabaseAuthClient>((sp, client) =>
-        {
-            var settings = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<SupabaseOptions>>().Value;
-            client.BaseAddress = new Uri(settings.Url.TrimEnd('/') + "/");
-            client.DefaultRequestHeaders.Accept.Add(
-                new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-        });
+        services.AddHttpClient<ISupabaseAuthClient, SupabaseAuthClient>(
+            (sp, client) =>
+            {
+                var settings =
+                    sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<SupabaseOptions>>().Value;
+                client.BaseAddress = new Uri(settings.Url.TrimEnd('/') + "/");
+                client.DefaultRequestHeaders.Accept.Add(
+                    new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json")
+                );
+            }
+        );
 
         return services;
     }

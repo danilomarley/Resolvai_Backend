@@ -14,7 +14,8 @@ public sealed class CurrentUser(IHttpContextAccessor httpContextAccessor) : ICur
 
     public string? Email => FindClaim(AppClaimTypes.Email);
 
-    public UserRole? Role => Enum.TryParse<UserRole>(FindClaim(AppClaimTypes.Role), out var role) ? role : null;
+    public UserRole? Role =>
+        Enum.TryParse<UserRole>(FindClaim(AppClaimTypes.Role), out var role) ? role : null;
 
     private string? FindClaim(string type) => Principal?.FindFirstValue(type);
 }

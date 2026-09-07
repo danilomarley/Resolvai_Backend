@@ -9,7 +9,7 @@ namespace Resolvai.Infrastructure.Persistence.TypeHandlers;
 /// </summary>
 public sealed class EmailTypeHandler : SqlMapper.TypeHandler<Email>
 {
-    public override Email Parse(object value) => Email.Create(value.ToString());
+    public override Email Parse(object value) => Email.Create(value.ToString()!);
 
     public override void SetValue(IDbDataParameter parameter, Email? value)
     {

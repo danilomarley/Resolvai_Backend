@@ -14,8 +14,10 @@ public abstract class Entity<TId> : IEquatable<Entity<TId>>
 
     public TId Id { get; }
 
-    public bool Equals(Entity<TId>? other)
-        => other is not null && other.GetType() == GetType() && EqualityComparer<TId>.Default.Equals(Id, other.Id);
+    public bool Equals(Entity<TId>? other) =>
+        other is not null
+        && other.GetType() == GetType()
+        && EqualityComparer<TId>.Default.Equals(Id, other.Id);
 
     public override bool Equals(object? obj) => obj is Entity<TId> entity && Equals(entity);
 

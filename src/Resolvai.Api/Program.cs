@@ -8,8 +8,10 @@ using Resolvai.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services
-    .AddControllers()
+builder
+    .Services.AddControllers(options =>
+        options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true
+    )
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;

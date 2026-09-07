@@ -21,8 +21,9 @@ public sealed class NpgsqlConnectionFactory : IDbConnectionFactory, IAsyncDispos
         if (string.IsNullOrWhiteSpace(settings.ConnectionString))
         {
             throw new InvalidOperationException(
-                "A connection string do PostgreSQL não foi configurada. " +
-                "Defina Database:ConnectionString (user-secrets) ou ConnectionStrings__Postgres (variável de ambiente).");
+                "A connection string do PostgreSQL não foi configurada. "
+                    + "Defina Database:ConnectionString (user-secrets) ou ConnectionStrings__Postgres (variável de ambiente)."
+            );
         }
 
         CommandTimeoutSeconds = settings.CommandTimeoutSeconds;
@@ -31,8 +32,9 @@ public sealed class NpgsqlConnectionFactory : IDbConnectionFactory, IAsyncDispos
 
     public int CommandTimeoutSeconds { get; }
 
-    public async Task<DbConnection> CreateConnectionAsync(CancellationToken cancellationToken = default)
-        => await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+    public async Task<DbConnection> CreateConnectionAsync(
+        CancellationToken cancellationToken = default
+    ) => await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
 
     public ValueTask DisposeAsync() => _dataSource.DisposeAsync();
 }

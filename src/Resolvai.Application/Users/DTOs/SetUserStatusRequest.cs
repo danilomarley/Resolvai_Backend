@@ -1,4 +1,4 @@
-namespace Resolvai.Application.DTOs.Users;
+namespace Resolvai.Application.Users.DTOs;
 
 public sealed record SetUserStatusRequest
 {
