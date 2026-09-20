@@ -107,8 +107,8 @@ public sealed class UserRepository(IDbConnectionFactory connectionFactory) : IUs
         string EmailAddress,
         string Role,
         bool IsActive,
-        DateTimeOffset CreatedAt,
-        DateTimeOffset? UpdatedAt)
+        DateTime CreatedAt,
+        DateTime? UpdatedAt)
     {
         public User ToDomain() => User.Restore(
             Id,
