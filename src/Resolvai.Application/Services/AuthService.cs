@@ -60,7 +60,7 @@ public sealed class AuthService(
             request.Name,
             cancellationToken);
 
-        var user = User.Register(authUser.Id, request.Name, email, UserRole.Viewer);
+        var user = User.Register(authUser.Id, request.Name, email, UserRole.Cliente);
         await userRepository.AddAsync(user, cancellationToken);
 
         return user.ToResponse();

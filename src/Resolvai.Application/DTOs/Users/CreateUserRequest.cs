@@ -20,5 +20,5 @@ public sealed record CreateUserRequest
     public required string Password { get; init; }
 
     [EnumDataType(typeof(UserRole))]
-    public UserRole Role { get; init; } = UserRole.Viewer;
+    public UserRole Role { get; init; } = UserRole.Cliente;
 }
