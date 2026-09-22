@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Resolvai.Application.Contracts.Security;
+using Resolvai.Application.Contracts.Orders;
 using Resolvai.Domain.Repositories;
 using Resolvai.Infrastructure.Options;
 using Resolvai.Infrastructure.Persistence.Connection;
@@ -44,6 +45,7 @@ public static class DependencyInjection
 
         services.AddSingleton<IDbConnectionFactory, NpgsqlConnectionFactory>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IOrderQueries, OrderQueries>();
 
         services.AddHttpClient<ISupabaseAuthClient, SupabaseAuthClient>((sp, client) =>
         {

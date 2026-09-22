@@ -2,6 +2,7 @@
   <Folder Name="/db/">
     <File Path="db/scripts/001_create_users.sql" />
     <File Path="db/scripts/002_drop_password_hash.sql" />
+    <File Path="db/scripts/003_create_orders.sql" />
   </Folder>
   <Folder Name="/solution items/">
     <File Path="Directory.Build.props" />
@@ -12,5 +13,8 @@
     <Project Path="src/Resolvai.Application/Resolvai.Application.csproj" />
     <Project Path="src/Resolvai.Infrastructure/Resolvai.Infrastructure.csproj" />
     <Project Path="src/Resolvai.Api/Resolvai.Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Resolvai.Application.Checks/Resolvai.Application.Checks.csproj" />
   </Folder>
 </Solution>
