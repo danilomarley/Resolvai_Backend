@@ -44,6 +44,8 @@ public static class DependencyInjection
 
         services.AddSingleton<IDbConnectionFactory, NpgsqlConnectionFactory>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IEnderecoRepository, EnderecoRepository>();
+        services.AddScoped<IContatoRepository, ContatoRepository>();
 
         services.AddHttpClient<ISupabaseAuthClient, SupabaseAuthClient>((sp, client) =>
         {

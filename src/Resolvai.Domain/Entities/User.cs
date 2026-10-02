@@ -14,7 +14,8 @@ public sealed class User : Entity<Guid>, IAggregateRoot
         UserRole role,
         bool isActive,
         DateTimeOffset createdAt,
-        DateTimeOffset? updatedAt)
+        DateTimeOffset? updatedAt,
+        string? cpf = null)
         : base(id)
     {
         Name = name;
@@ -23,6 +24,7 @@ public sealed class User : Entity<Guid>, IAggregateRoot
         IsActive = isActive;
         CreatedAt = createdAt;
         UpdatedAt = updatedAt;
+        Cpf = cpf;
     }
 
     public string Name { get; private set; }
@@ -32,6 +34,8 @@ public sealed class User : Entity<Guid>, IAggregateRoot
     public UserRole Role { get; private set; }
 
     public bool IsActive { get; private set; }
+
+    public string? Cpf { get; private set; }
 
     public DateTimeOffset CreatedAt { get; }
 
@@ -75,8 +79,9 @@ public sealed class User : Entity<Guid>, IAggregateRoot
         UserRole role,
         bool isActive,
         DateTimeOffset createdAt,
-        DateTimeOffset? updatedAt)
-        => new(id, name, email, role, isActive, createdAt, updatedAt);
+        DateTimeOffset? updatedAt,
+        string? cpf = null)
+        => new(id, name, email, role, isActive, createdAt, updatedAt, cpf);
 
     public void ChangeName(string name)
     {
@@ -92,6 +97,22 @@ public sealed class User : Entity<Guid>, IAggregateRoot
     public void ChangeRole(UserRole role)
     {
         Role = role;
+        Touch();
+    }
+
+    /// <summary>
+    /// Finaliza o cadastro gravando o CPF do usuário. Só pode ser feito uma vez.
+    /// </summary>
+    public void CompleteRegistration(string cpf)
+    {
+        var digits = new string(cpf.Where(char.IsDigit).ToArray());
+
+        if (digits.Length != 11)
+        {
+            throw new DomainException("CPF inválido.");
+        }
+
+        Cpf = digits;
         Touch();
     }
 

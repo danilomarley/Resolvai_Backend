@@ -11,5 +11,6 @@ public static class UserMapper
         user.Email.Value,
         user.Role.ToString(),
         user.IsActive,
-        user.CreatedAt);
+        user.CreatedAt,
+        user.Cpf);
 }

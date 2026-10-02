@@ -49,7 +49,9 @@ public static class AuthenticationExtensions
     }
 
     /// <summary>
-    /// O JWT do Supabase traz role=authenticated. Substituímos pela role do perfil local (Viewer/Inspector/Admin).
+    /// O JWT do Supabase traz role=authenticated. Substituímos pela role do perfil local (Cliente/Prestador/Admin).
+    /// Usuário sem perfil local ainda (cadastro não finalizado) segue autenticado só com as claims do Supabase,
+    /// para poder chamar a rota de finalização de cadastro.
     /// </summary>
     private static async Task EnrichWithLocalProfileAsync(TokenValidatedContext context)
     {
@@ -65,7 +67,6 @@ public static class AuthenticationExtensions
 
         if (user is null)
         {
-            context.Fail("Usuário autenticado no Supabase sem perfil local.");
             return;
         }
 

@@ -13,4 +13,6 @@ public interface IUserService
     Task<IReadOnlyList<UserResponse>> GetAllAsync(CancellationToken cancellationToken = default);
 
     Task<UserResponse> SetActiveAsync(Guid id, bool isActive, CancellationToken cancellationToken = default);
+
+    Task<UserResponse> CompleteRegistrationAsync(CompleteRegistrationRequest request, CancellationToken cancellationToken = default);
 }
