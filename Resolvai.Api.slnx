@@ -2,7 +2,14 @@
   <Folder Name="/db/">
     <File Path="db/scripts/001_create_users.sql" />
     <File Path="db/scripts/002_drop_password_hash.sql" />
-    <File Path="db/scripts/003_create_orders.sql" />
+    <File Path="db/scripts/004_create_contatos.sql" />
+    <File Path="db/scripts/005_create_enderecos.sql" />
+    <File Path="db/scripts/006_create_pedidos.sql" />
+    <File Path="db/scripts/007_create_fotos_pedido.sql" />
+    <File Path="db/scripts/008_create_propostas.sql" />
+    <File Path="db/scripts/009_add_cpf_to_users.sql" />
+    <File Path="db/scripts/010_update_users_role.sql" />
+    <File Path="db/scripts/011_create_ix_pedidos_cliente_criacao.sql" />
   </Folder>
   <Folder Name="/solution items/">
     <File Path="Directory.Build.props" />

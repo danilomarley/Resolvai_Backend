@@ -52,11 +52,19 @@ Content-Type: application/json
   "isActive": false
 }
 
-### Detalhes de um pedido do usuário autenticado (substitua orderId)
+### Seus Pedidos: lista paginada (status, page e pageSize são opcionais)
+GET {{host}}/api/v1/orders?page=1&pageSize=10
+Authorization: Bearer {{token}}
+
+### Seus Pedidos filtrados por status (Pending, InProgress, Completed, Cancelled)
+GET {{host}}/api/v1/orders?status=Pending
+Authorization: Bearer {{token}}
+
+### Detalhes de um pedido do usuário autenticado, com escopo, fotos e propostas (substitua orderId)
 GET {{host}}/api/v1/orders/{{orderId}}
 Authorization: Bearer {{token}}
 
-### Resumo da Home
+### Resumo da Home (dados dos cards e pedidos recentes)
 GET {{host}}/api/v1/home/summary
 Authorization: Bearer {{token}}
 
