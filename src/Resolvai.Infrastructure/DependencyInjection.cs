@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Resolvai.Application.Contracts.Security;
+using Resolvai.Application.Contracts.Orders;
 using Resolvai.Domain.Repositories;
 using Resolvai.Infrastructure.Options;
 using Resolvai.Infrastructure.Persistence.Connection;
@@ -46,6 +47,7 @@ public static class DependencyInjection
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IEnderecoRepository, EnderecoRepository>();
         services.AddScoped<IContatoRepository, ContatoRepository>();
+        services.AddScoped<IOrderQueries, OrderQueries>();
 
         services.AddHttpClient<ISupabaseAuthClient, SupabaseAuthClient>((sp, client) =>
         {

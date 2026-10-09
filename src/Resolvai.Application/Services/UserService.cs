@@ -99,12 +99,14 @@ public sealed class UserService(
             throw new ConflictException("Cadastro já finalizado.");
         }
 
-        if (await userRepository.ExistsByCpfAsync(request.Cpf, id, cancellationToken))
+        var cpf = OnlyDigits(request.Cpf);
+
+        if (await userRepository.ExistsByCpfAsync(cpf, id, cancellationToken))
         {
             throw new ConflictException($"Já existe um usuário com o CPF '{request.Cpf}'.");
         }
 
-        user.CompleteRegistration(request.Cpf);
+        user.CompleteRegistration(cpf);
         await userRepository.UpdateAsync(user, cancellationToken);
 
         var endereco = Endereco.Register(
@@ -114,8 +116,8 @@ public sealed class UserService(
             request.Endereco.Complemento,
             request.Endereco.Bairro,
             request.Endereco.Cidade,
-            request.Endereco.Estado,
-            request.Endereco.Cep,
+            request.Endereco.Estado.ToUpperInvariant(),
+            OnlyDigits(request.Endereco.Cep),
             request.Endereco.Apelido,
             request.Endereco.Latitude,
             request.Endereco.Longitude,
@@ -127,4 +129,6 @@ public sealed class UserService(
 
         return user.ToResponse();
     }
+
+    private static string OnlyDigits(string value) => new(value.Where(char.IsDigit).ToArray());
 }

@@ -13,8 +13,8 @@ public sealed class User : Entity<Guid>, IAggregateRoot
         Email email,
         UserRole role,
         bool isActive,
-        DateTimeOffset createdAt,
-        DateTimeOffset? updatedAt,
+        DateTime createdAt,
+        DateTime? updatedAt,
         string? cpf = null)
         : base(id)
     {
@@ -37,9 +37,9 @@ public sealed class User : Entity<Guid>, IAggregateRoot
 
     public string? Cpf { get; private set; }
 
-    public DateTimeOffset CreatedAt { get; }
+    public DateTime CreatedAt { get; }
 
-    public DateTimeOffset? UpdatedAt { get; private set; }
+    public DateTime? UpdatedAt { get; private set; }
 
     /// <summary>
     /// Cria o perfil local vinculado a um usuário já autenticado no Supabase Auth.
@@ -65,7 +65,7 @@ public sealed class User : Entity<Guid>, IAggregateRoot
             email,
             role,
             isActive: true,
-            createdAt: DateTimeOffset.UtcNow,
+            createdAt: DateTime.UtcNow,
             updatedAt: null);
     }
 
@@ -78,8 +78,8 @@ public sealed class User : Entity<Guid>, IAggregateRoot
         Email email,
         UserRole role,
         bool isActive,
-        DateTimeOffset createdAt,
-        DateTimeOffset? updatedAt,
+        DateTime createdAt,
+        DateTime? updatedAt,
         string? cpf = null)
         => new(id, name, email, role, isActive, createdAt, updatedAt, cpf);
 
@@ -138,5 +138,5 @@ public sealed class User : Entity<Guid>, IAggregateRoot
         Touch();
     }
 
-    private void Touch() => UpdatedAt = DateTimeOffset.UtcNow;
+    private void Touch() => UpdatedAt = DateTime.UtcNow;
 }

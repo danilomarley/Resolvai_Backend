@@ -1,4 +1,5 @@
 @host = http://localhost:5172
+@orderId = 00000000-0000-0000-0000-000000000000
 
 ### Auto-cadastro (público, sempre cria com papel Viewer)
 POST {{host}}/api/v1/auth/register
@@ -51,4 +52,13 @@ Content-Type: application/json
   "isActive": false
 }
 
-###
+### Detalhes de um pedido do usuário autenticado (substitua orderId)
+GET {{host}}/api/v1/orders/{{orderId}}
+Authorization: Bearer {{token}}
+
+### Resumo da Home
+GET {{host}}/api/v1/home/summary
+Authorization: Bearer {{token}}
+
+### Documento OpenAPI de todas as rotas
+GET {{host}}/openapi/v1.json

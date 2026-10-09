@@ -13,6 +13,7 @@ public sealed record CompleteRegistrationRequest
 
     [Required]
     [MaxLength(14)]
+    [RegularExpression(@"^(\d{11}|\d{3}\.\d{3}\.\d{3}-\d{2})$", ErrorMessage = "CPF inválido.")]
     public required string Cpf { get; init; }
 
     [Required]
@@ -45,10 +46,12 @@ public sealed record EnderecoRequest
 
     [Required]
     [MaxLength(2)]
+    [RegularExpression("^[A-Za-z]{2}$", ErrorMessage = "Estado inválido.")]
     public required string Estado { get; init; }
 
     [Required]
     [MaxLength(9)]
+    [RegularExpression(@"^(\d{8}|\d{5}-\d{3})$", ErrorMessage = "CEP inválido.")]
     public required string Cep { get; init; }
 
     [MaxLength(60)]

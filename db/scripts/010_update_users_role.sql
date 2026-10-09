@@ -1,4 +1,4 @@
--- 003_update_users_role.sql
+-- 010_update_users_role.sql
 -- Ajusta public.users para os papéis reais do ResolvAI (Cliente/Prestador/Admin).
 
 update public.users set role = 'Cliente' where role = 'Viewer';
