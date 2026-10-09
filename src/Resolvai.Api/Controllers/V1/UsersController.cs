@@ -60,4 +60,16 @@ public sealed class UsersController(IUserService userService) : ApiControllerBas
         [FromBody] SetUserStatusRequest request,
         CancellationToken cancellationToken)
         => Ok(await userService.SetActiveAsync(id, request.IsActive, cancellationToken));
+
+    /// <summary>
+    /// Finaliza o cadastro do usuário dono do token (CPF, endereço e contato).
+    /// </summary>
+    [HttpPost("me/complete-registration")]
+    [ProducesResponseType<UserResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<UserResponse>> CompleteRegistration(
+        [FromBody] CompleteRegistrationRequest request,
+        CancellationToken cancellationToken)
+        => Ok(await userService.CompleteRegistrationAsync(request, cancellationToken));
 }

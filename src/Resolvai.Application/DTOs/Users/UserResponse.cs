@@ -6,4 +6,5 @@ public sealed record UserResponse(
     string Email,
     string Role,
     bool IsActive,
-    DateTimeOffset CreatedAt);
+    DateTimeOffset CreatedAt,
+    string? Cpf);

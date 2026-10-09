@@ -16,7 +16,8 @@ public sealed class UserRepository(IDbConnectionFactory connectionFactory) : IUs
                role       as "Role",
                is_active  as "IsActive",
                created_at as "CreatedAt",
-               updated_at as "UpdatedAt"
+               updated_at as "UpdatedAt",
+               cpf        as "Cpf"
         from users
         """;
 
@@ -48,6 +49,17 @@ public sealed class UserRepository(IDbConnectionFactory connectionFactory) : IUs
             Command("select exists (select 1 from users where email = @Email);", new { Email = email }, cancellationToken));
     }
 
+    public async Task<bool> ExistsByCpfAsync(string cpf, Guid excludingUserId, CancellationToken cancellationToken = default)
+    {
+        await using var connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
+
+        return await connection.ExecuteScalarAsync<bool>(
+            Command(
+                "select exists (select 1 from users where cpf = @Cpf and id <> @ExcludingUserId);",
+                new { Cpf = cpf, ExcludingUserId = excludingUserId },
+                cancellationToken));
+    }
+
     public async Task<IReadOnlyList<User>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         await using var connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
@@ -61,8 +73,8 @@ public sealed class UserRepository(IDbConnectionFactory connectionFactory) : IUs
     public async Task AddAsync(User user, CancellationToken cancellationToken = default)
     {
         const string sql = """
-            insert into users (id, name, email, role, is_active, created_at, updated_at)
-            values (@Id, @Name, @Email, @Role, @IsActive, @CreatedAt, @UpdatedAt);
+            insert into users (id, name, email, role, is_active, created_at, updated_at, cpf)
+            values (@Id, @Name, @Email, @Role, @IsActive, @CreatedAt, @UpdatedAt, @Cpf);
             """;
 
         await using var connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
@@ -78,7 +90,8 @@ public sealed class UserRepository(IDbConnectionFactory connectionFactory) : IUs
                    email      = @Email,
                    role       = @Role,
                    is_active  = @IsActive,
-                   updated_at = @UpdatedAt
+                   updated_at = @UpdatedAt,
+                   cpf        = @Cpf
              where id = @Id;
             """;
 
@@ -98,7 +111,8 @@ public sealed class UserRepository(IDbConnectionFactory connectionFactory) : IUs
         Role = user.Role.ToString(),
         user.IsActive,
         user.CreatedAt,
-        user.UpdatedAt
+        user.UpdatedAt,
+        user.Cpf
     };
 
     private sealed record UserRow(
@@ -108,7 +122,8 @@ public sealed class UserRepository(IDbConnectionFactory connectionFactory) : IUs
         string Role,
         bool IsActive,
         DateTime CreatedAt,
-        DateTime? UpdatedAt)
+        DateTime? UpdatedAt,
+        string? Cpf)
     {
         public User ToDomain() => User.Restore(
             Id,
@@ -117,6 +132,7 @@ public sealed class UserRepository(IDbConnectionFactory connectionFactory) : IUs
             Enum.Parse<UserRole>(Role, ignoreCase: true),
             IsActive,
             CreatedAt,
-            UpdatedAt);
+            UpdatedAt,
+            Cpf);
     }
 }
