@@ -52,6 +52,24 @@ Content-Type: application/json
   "isActive": false
 }
 
+### Cria um pedido (cliente com cadastro finalizado)
+POST {{host}}/api/v1/orders
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "titulo": "Infiltração na laje do quarto",
+  "categoria": "Impermeabilização",
+  "descricao": "A umidade aparece depois de chuvas.",
+  "localizacao": "Aldeota, Fortaleza",
+  "detalhes": "Mancha de 1 m² no canto do quarto",
+  "urgencia": "Nos próximos dias",
+  "especificacoes": "Inspeção, preparação da superfície e manta",
+  "fotos": [
+    { "url": "https://exemplo.supabase.co/storage/v1/object/public/pedidos/laje.jpg", "descricao": "Mancha" }
+  ]
+}
+
 ### Seus Pedidos: lista paginada (status, page e pageSize são opcionais)
 GET {{host}}/api/v1/orders?page=1&pageSize=10
 Authorization: Bearer {{token}}
