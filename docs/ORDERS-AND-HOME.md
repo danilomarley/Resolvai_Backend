@@ -13,14 +13,15 @@ As classes desta funcionalidade seguem o padrão em português do domínio (`Con
 | Camada | Classes |
 | --- | --- |
 | Domain | `StatusPedido`, `StatusProposta` |
-| Application | `IPedidoService`/`PedidoService`, `IPedidoQueries`, `ListarPedidosQuery`, `PedidoResumoResponse`, `PedidoResponse`, `FotoPedidoResponse`, `PropostaResponse`, `ResumoHomeResponse`, `ContagemPedidosResponse`, `ContagemPropostasResponse`, `PaginaResponse<T>` |
-| Infrastructure | `PedidoQueries` |
+| Application | `IPedidoService`/`PedidoService`, `IPedidoQueries`, `IPedidoRepository`, `CriarPedidoRequest`, `ListarPedidosQuery`, `PedidoResumoResponse`, `PedidoResponse`, `FotoPedidoResponse`, `PropostaResponse`, `ResumoHomeResponse`, `ContagemPedidosResponse`, `ContagemPropostasResponse`, `PaginaResponse<T>` |
+| Infrastructure | `PedidoQueries`, `PedidoRepository` |
 | Api | `PedidosController` (`/api/v1/orders`), `HomeController` (`/api/v1/home`) |
 
 ## Rotas
 
 | Método | Rota | Resposta | Issue |
 | --- | --- | --- | --- |
+| POST | `/api/v1/orders` | Cria um pedido para o cliente autenticado | Resolvai_Cliente#51 |
 | GET | `/api/v1/orders?status=&page=1&pageSize=10` | Lista paginada dos pedidos do usuário (Seus Pedidos) | Resolvai_Cliente#49 |
 | GET | `/api/v1/orders/{id}` | Detalhe de um pedido com escopo, fotos e propostas | Resolvai_Cliente#49 |
 | GET | `/api/v1/home/summary` | Dados dos cards e os 5 pedidos mais recentes | Resolvai_Cliente#50 |
@@ -94,6 +95,24 @@ Valores inválidos retornam 400 (`ValidationProblemDetails`). Uma página além 
 ```
 
 `proposalsCount` conta todas as propostas recebidas pelo pedido. `chosenProposalValue` é o valor da proposta com status `escolhida` e é omitido enquanto nenhuma foi escolhida.
+
+## POST /api/v1/orders
+
+Cria um pedido com status `aberto` (`Pending` na API) para o usuário do token e devolve o detalhe, com 201 e o cabeçalho `Location` apontando para `GET /api/v1/orders/{id}`.
+
+| Campo | Regra |
+| --- | --- |
+| `categoria` | obrigatório, até 80 caracteres |
+| `descricao` | obrigatório, de 10 a 2000 caracteres |
+| `localizacao` | obrigatório, de 3 a 200 caracteres |
+| `titulo` | opcional, até 90 caracteres |
+| `detalhes`, `especificacoes` | opcionais, até 2000 caracteres |
+| `urgencia` | opcional, até 40 caracteres |
+| `fotos[]` | opcional, até 4 itens com `url` (obrigatória) e `descricao` |
+
+As chaves de texto vão para `pedidos.escopo` e cada foto vira uma linha em `fotos_pedido`, na mesma transação do pedido. O arquivo da foto não passa pela API: o front envia a imagem ao storage e manda só a URL.
+
+Retorna 400 quando o corpo é inválido, quando o cadastro ainda não foi finalizado (sem CPF) ou quando o usuário não é Cliente.
 
 ## GET /api/v1/orders/{id}
 

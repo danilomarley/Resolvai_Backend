@@ -19,6 +19,20 @@ public sealed class PedidosController(IPedidoService pedidoService) : ApiControl
         CancellationToken cancellationToken)
         => Ok(await pedidoService.ListAsync(query, cancellationToken));
 
+    [HttpPost]
+    [EndpointSummary("Cria um pedido para o cliente autenticado.")]
+    [EndpointDescription("Exige cadastro finalizado. O pedido nasce com status Pending. As fotos devem ser enviadas como URLs já hospedadas (até 4).")]
+    [ProducesResponseType<PedidoResponse>(StatusCodes.Status201Created)]
+    [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<PedidoResponse>> Create(
+        [FromBody] CriarPedidoRequest request,
+        CancellationToken cancellationToken)
+    {
+        var pedido = await pedidoService.CriarAsync(request, cancellationToken);
+
+        return CreatedAtAction(nameof(GetById), new { id = pedido.Id }, pedido);
+    }
+
     [HttpGet("{id:guid}")]
     [EndpointSummary("Consulta os detalhes de um pedido do usuário autenticado.")]
     [EndpointDescription("Inclui escopo, fotos e propostas recebidas. Retorna 404 quando o pedido não existe ou pertence a outro usuário.")]

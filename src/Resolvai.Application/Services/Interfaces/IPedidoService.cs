@@ -7,6 +7,7 @@ namespace Resolvai.Application.Services.Interfaces;
 public interface IPedidoService
 {
     Task<PaginaResponse<PedidoResumoResponse>> ListAsync(ListarPedidosQuery query, CancellationToken cancellationToken = default);
+    Task<PedidoResponse> CriarAsync(CriarPedidoRequest request, CancellationToken cancellationToken = default);
     Task<PedidoResponse> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<ResumoHomeResponse> GetSummaryAsync(CancellationToken cancellationToken = default);
 }

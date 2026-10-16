@@ -48,6 +48,7 @@ public static class DependencyInjection
         services.AddScoped<IEnderecoRepository, EnderecoRepository>();
         services.AddScoped<IContatoRepository, ContatoRepository>();
         services.AddScoped<IPedidoQueries, PedidoQueries>();
+        services.AddScoped<IPedidoRepository, PedidoRepository>();
 
         services.AddHttpClient<ISupabaseAuthClient, SupabaseAuthClient>((sp, client) =>
         {
