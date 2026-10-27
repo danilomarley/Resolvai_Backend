@@ -10,6 +10,9 @@
     <File Path="db/scripts/009_add_cpf_to_users.sql" />
     <File Path="db/scripts/010_update_users_role.sql" />
     <File Path="db/scripts/011_create_ix_pedidos_cliente_criacao.sql" />
+    <File Path="db/scripts/012_create_fornecedores.sql" />
+    <File Path="db/scripts/013_create_especialidades_fornecedor.sql" />
+    <File Path="db/scripts/014_users_cpf_por_papel.sql" />
   </Folder>
   <Folder Name="/solution items/">
     <File Path="Directory.Build.props" />
