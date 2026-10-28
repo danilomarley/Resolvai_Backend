@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Resolvai.Application.Contracts.Fornecedores;
 using Resolvai.Application.Contracts.Security;
 using Resolvai.Application.Contracts.Pedidos;
 using Resolvai.Domain.Repositories;
@@ -47,6 +48,8 @@ public static class DependencyInjection
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IEnderecoRepository, EnderecoRepository>();
         services.AddScoped<IContatoRepository, ContatoRepository>();
+        services.AddScoped<IFornecedorRepository, FornecedorRepository>();
+        services.AddScoped<IEspecialidadeQueries, EspecialidadeQueries>();
         services.AddScoped<IPedidoQueries, PedidoQueries>();
         services.AddScoped<IPedidoRepository, PedidoRepository>();
 

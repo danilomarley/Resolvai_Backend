@@ -1,4 +1,5 @@
 using Resolvai.Domain.Entities;
+using Resolvai.Domain.Enums;
 using Resolvai.Domain.ValueObjects;
 
 namespace Resolvai.Domain.Repositories;
@@ -11,7 +12,7 @@ public interface IUserRepository
 
     Task<bool> ExistsByEmailAsync(Email email, CancellationToken cancellationToken = default);
 
-    Task<bool> ExistsByCpfAsync(string cpf, Guid excludingUserId, CancellationToken cancellationToken = default);
+    Task<bool> ExistsByCpfAsync(string cpf, UserRole role, Guid excludingUserId, CancellationToken cancellationToken = default);
 
     Task<IReadOnlyList<User>> GetAllAsync(CancellationToken cancellationToken = default);
 

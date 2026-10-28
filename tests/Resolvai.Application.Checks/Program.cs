@@ -86,7 +86,10 @@ Check(PaginaResponse<int>.Create([], 1, 10, 0).TotalPages == 0, "Sem itens não 
 Check(PaginaResponse<int>.Create([], 1, 10, 20).TotalPages == 2, "Total múltiplo do tamanho da página");
 Check(PaginaResponse<int>.Create([], 1, 10, 21).TotalPages == 3, "Página parcial conta como página");
 
-Console.WriteLine("Todos os testes de serviço passaram.");
+await ProviderChecks.RunAsync();
+await AuthClientChecks.RunAsync();
+
+Console.WriteLine("Todos os testes de serviço e cadastro passaram.");
 
 static CriarPedidoRequest NovoPedido() => new()
 {
@@ -180,7 +183,7 @@ sealed class FakeUsers : IUserRepository
     public Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) => Task.FromResult(User);
     public Task<User?> GetByEmailAsync(Email email, CancellationToken cancellationToken = default) => throw new NotSupportedException();
     public Task<bool> ExistsByEmailAsync(Email email, CancellationToken cancellationToken = default) => throw new NotSupportedException();
-    public Task<bool> ExistsByCpfAsync(string cpf, Guid excludingUserId, CancellationToken cancellationToken = default) => throw new NotSupportedException();
+    public Task<bool> ExistsByCpfAsync(string cpf, UserRole role, Guid excludingUserId, CancellationToken cancellationToken = default) => throw new NotSupportedException();
     public Task<IReadOnlyList<User>> GetAllAsync(CancellationToken cancellationToken = default) => throw new NotSupportedException();
     public Task AddAsync(User user, CancellationToken cancellationToken = default) => throw new NotSupportedException();
     public Task UpdateAsync(User user, CancellationToken cancellationToken = default) => throw new NotSupportedException();

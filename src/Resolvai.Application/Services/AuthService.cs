@@ -27,8 +27,7 @@ public sealed class AuthService(
             request.Password,
             cancellationToken);
 
-        var user = await userRepository.GetByIdAsync(session.User.Id, cancellationToken)
-            ?? await userRepository.GetByEmailAsync(email, cancellationToken);
+        var user = await userRepository.GetByIdAsync(session.User.Id, cancellationToken);
 
         if (user is null || !user.IsActive)
         {
@@ -51,8 +50,10 @@ public sealed class AuthService(
 
         if (await userRepository.ExistsByEmailAsync(email, cancellationToken))
         {
-            throw new ConflictException($"Já existe um usuário com o e-mail '{email.Value}'.");
+            throw new ConflictException("E-mail já cadastrado.");
         }
+
+        _ = User.Register(Guid.NewGuid(), request.Name, email, UserRole.Cliente);
 
         var authUser = await supabaseAuthClient.SignUpAsync(
             email.Value,

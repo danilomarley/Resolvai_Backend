@@ -4,5 +4,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../../src/Resolvai.Application/Resolvai.Application.csproj" />
+    <ProjectReference Include="../../src/Resolvai.Infrastructure/Resolvai.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

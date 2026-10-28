@@ -33,7 +33,7 @@ public sealed class UsersController(IUserService userService) : ApiControllerBas
         => Ok(await userService.GetByIdAsync(id, cancellationToken));
 
     /// <summary>
-    /// Criação administrativa, única forma de nascer com papel diferente de Viewer.
+    /// Criação administrativa de usuários com o papel informado.
     /// </summary>
     [HttpPost]
     [Authorize(Roles = nameof(UserRole.Admin))]
