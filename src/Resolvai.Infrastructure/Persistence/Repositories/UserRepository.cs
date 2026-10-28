@@ -1,4 +1,6 @@
 using Dapper;
+using Npgsql;
+using Resolvai.Application.Common.Exceptions;
 using Resolvai.Domain.Entities;
 using Resolvai.Domain.Enums;
 using Resolvai.Domain.Repositories;
@@ -18,7 +20,7 @@ public sealed class UserRepository(IDbConnectionFactory connectionFactory) : IUs
                created_at as "CreatedAt",
                updated_at as "UpdatedAt",
                cpf        as "Cpf"
-        from users
+        from public.users
         """;
 
     public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
@@ -36,7 +38,7 @@ public sealed class UserRepository(IDbConnectionFactory connectionFactory) : IUs
         await using var connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
 
         var row = await connection.QuerySingleOrDefaultAsync<UserRow>(
-            Command($"{SelectColumns} where email = @Email;", new { Email = email }, cancellationToken));
+            Command($"{SelectColumns} where email = @Email;", new { Email = email.Value }, cancellationToken));
 
         return row?.ToDomain();
     }
@@ -46,17 +48,17 @@ public sealed class UserRepository(IDbConnectionFactory connectionFactory) : IUs
         await using var connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
 
         return await connection.ExecuteScalarAsync<bool>(
-            Command("select exists (select 1 from users where email = @Email);", new { Email = email }, cancellationToken));
+            Command("select exists (select 1 from public.users where email = @Email);", new { Email = email.Value }, cancellationToken));
     }
 
-    public async Task<bool> ExistsByCpfAsync(string cpf, Guid excludingUserId, CancellationToken cancellationToken = default)
+    public async Task<bool> ExistsByCpfAsync(string cpf, UserRole role, Guid excludingUserId, CancellationToken cancellationToken = default)
     {
         await using var connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
 
         return await connection.ExecuteScalarAsync<bool>(
             Command(
-                "select exists (select 1 from users where cpf = @Cpf and id <> @ExcludingUserId);",
-                new { Cpf = cpf, ExcludingUserId = excludingUserId },
+                "select exists (select 1 from public.users where cpf = @Cpf and role = @Role and id <> @ExcludingUserId);",
+                new { Cpf = cpf, Role = role.ToString(), ExcludingUserId = excludingUserId },
                 cancellationToken));
     }
 
@@ -73,19 +75,26 @@ public sealed class UserRepository(IDbConnectionFactory connectionFactory) : IUs
     public async Task AddAsync(User user, CancellationToken cancellationToken = default)
     {
         const string sql = """
-            insert into users (id, name, email, role, is_active, created_at, updated_at, cpf)
+            insert into public.users (id, name, email, role, is_active, created_at, updated_at, cpf)
             values (@Id, @Name, @Email, @Role, @IsActive, @CreatedAt, @UpdatedAt, @Cpf);
             """;
 
         await using var connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
 
-        await connection.ExecuteAsync(Command(sql, ToParameters(user), cancellationToken));
+        try
+        {
+            await connection.ExecuteAsync(Command(sql, ToParameters(user), cancellationToken));
+        }
+        catch (PostgresException exception) when (exception.SqlState == PostgresErrorCodes.UniqueViolation)
+        {
+            throw new ConflictException("Já existe um usuário com estes dados.");
+        }
     }
 
     public async Task UpdateAsync(User user, CancellationToken cancellationToken = default)
     {
         const string sql = """
-            update users
+            update public.users
                set name       = @Name,
                    email      = @Email,
                    role       = @Role,
@@ -97,7 +106,14 @@ public sealed class UserRepository(IDbConnectionFactory connectionFactory) : IUs
 
         await using var connection = await connectionFactory.CreateConnectionAsync(cancellationToken);
 
-        await connection.ExecuteAsync(Command(sql, ToParameters(user), cancellationToken));
+        try
+        {
+            await connection.ExecuteAsync(Command(sql, ToParameters(user), cancellationToken));
+        }
+        catch (PostgresException exception) when (exception.SqlState == PostgresErrorCodes.UniqueViolation)
+        {
+            throw new ConflictException("Já existe um usuário com estes dados.");
+        }
     }
 
     private CommandDefinition Command(string sql, object? parameters, CancellationToken cancellationToken)
@@ -107,7 +123,7 @@ public sealed class UserRepository(IDbConnectionFactory connectionFactory) : IUs
     {
         user.Id,
         user.Name,
-        user.Email,
+        Email = user.Email.Value,
         Role = user.Role.ToString(),
         user.IsActive,
         user.CreatedAt,

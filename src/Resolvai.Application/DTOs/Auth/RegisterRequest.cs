@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Resolvai.Application.DTOs.Auth;
 
 /// <summary>
-/// Auto-cadastro público. O papel é sempre Viewer; promoção só por um Admin.
+/// Auto-cadastro público de Cliente. Prestadores utilizam o cadastro profissional.
 /// </summary>
 public sealed record RegisterRequest
 {

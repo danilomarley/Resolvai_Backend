@@ -5,6 +5,7 @@ using Resolvai.Application.Mappings;
 using Resolvai.Application.Services.Interfaces;
 using Resolvai.Domain.Entities;
 using Resolvai.Domain.Enums;
+using Resolvai.Domain.Exceptions;
 using Resolvai.Domain.Repositories;
 using Resolvai.Domain.ValueObjects;
 
@@ -23,7 +24,7 @@ public sealed class UserService(
 
         if (await userRepository.ExistsByEmailAsync(email, cancellationToken))
         {
-            throw new ConflictException($"Já existe um usuário com o e-mail '{email.Value}'.");
+            throw new ConflictException("E-mail já cadastrado.");
         }
 
         var authUser = await supabaseAuthClient.AdminCreateUserAsync(
@@ -94,6 +95,11 @@ public sealed class UserService(
             await userRepository.AddAsync(user, cancellationToken);
         }
 
+        if (user.Role != UserRole.Cliente)
+        {
+            throw new DomainException("Esta finalização de cadastro é exclusiva de contas Cliente.");
+        }
+
         if (!string.IsNullOrWhiteSpace(user.Cpf))
         {
             throw new ConflictException("Cadastro já finalizado.");
@@ -101,9 +107,9 @@ public sealed class UserService(
 
         var cpf = OnlyDigits(request.Cpf);
 
-        if (await userRepository.ExistsByCpfAsync(cpf, id, cancellationToken))
+        if (await userRepository.ExistsByCpfAsync(cpf, user.Role, id, cancellationToken))
         {
-            throw new ConflictException($"Já existe um usuário com o CPF '{request.Cpf}'.");
+            throw new ConflictException("CPF já cadastrado neste papel.");
         }
 
         user.CompleteRegistration(cpf);

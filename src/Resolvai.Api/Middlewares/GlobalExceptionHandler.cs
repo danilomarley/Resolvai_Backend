@@ -58,6 +58,7 @@ public sealed class GlobalExceptionHandler(
         UnauthorizedException ex => (StatusCodes.Status401Unauthorized, "Não autorizado", ex.Message),
         NotFoundException ex => (StatusCodes.Status404NotFound, "Recurso não encontrado", ex.Message),
         ConflictException ex => (StatusCodes.Status409Conflict, "Conflito", ex.Message),
+        RegistrationPendingException ex => (StatusCodes.Status503ServiceUnavailable, "Cadastro pendente", ex.Message),
         DomainException ex => (StatusCodes.Status400BadRequest, "Requisição inválida", ex.Message),
         OperationCanceledException => (StatusCodes.Status499ClientClosedRequest, "Requisição cancelada", "A requisição foi cancelada pelo cliente."),
         // Mensagem genérica: detalhes de exceções inesperadas ficam apenas no log.
